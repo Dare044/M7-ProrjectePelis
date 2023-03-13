@@ -13,7 +13,8 @@ class PeliculaController extends Controller
     public function index()
     {
         //
-        return view('peliculas.index');
+        $datos['peliculas']=Pelicula::paginate(5);
+        return view('peliculas.index',$datos);
     }
 
     /**
@@ -31,6 +32,12 @@ class PeliculaController extends Controller
     public function store(Request $request)
     {
         //
+        //$datosPelicula = request()->all();
+
+        $datosPeli = request()->except('_token');
+        Pelicula::insert($datosPeli);
+
+        return response()->json($datosPeli);
     }
 
     /**
@@ -44,9 +51,11 @@ class PeliculaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pelicula $pelicula)
+    public function edit($id)
     {
         //
+        $pelicula=Pelicula::findOrFail($id);
+        return view('peliculas.edit',compact('pelicula') );
     }
 
     /**
@@ -59,9 +68,13 @@ class PeliculaController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @param \App\Models\Pelicula $pelicula
+     * @return \Illuminate\Http\Response     
      */
-    public function destroy(Pelicula $pelicula)
+    public function destroy($id)
     {
         //
+        Pelicula::destroy($id);
+        return redirect('peliculas');
     }
 }
